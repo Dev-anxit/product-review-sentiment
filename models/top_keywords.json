@@ -1,0 +1,102 @@
+{
+  "positive_words": [
+    {
+      "word": "great",
+      "weight": 12.6693
+    },
+    {
+      "word": "love",
+      "weight": 11.7721
+    },
+    {
+      "word": "perfect",
+      "weight": 9.0481
+    },
+    {
+      "word": "good",
+      "weight": 7.5444
+    },
+    {
+      "word": "works",
+      "weight": 7.4171
+    },
+    {
+      "word": "amazing",
+      "weight": 7.161
+    },
+    {
+      "word": "nice",
+      "weight": 6.7151
+    },
+    {
+      "word": "excellent",
+      "weight": 6.6461
+    },
+    {
+      "word": "best",
+      "weight": 6.5187
+    },
+    {
+      "word": "awesome",
+      "weight": 5.9228
+    },
+    {
+      "word": "happy",
+      "weight": 5.5238
+    },
+    {
+      "word": "easy",
+      "weight": 5.4934
+    }
+  ],
+  "negative_words": [
+    {
+      "word": "not",
+      "weight": -12.0288
+    },
+    {
+      "word": "disappointed",
+      "weight": -9.7301
+    },
+    {
+      "word": "not good",
+      "weight": -7.0859
+    },
+    {
+      "word": "broke",
+      "weight": -6.7426
+    },
+    {
+      "word": "not worth",
+      "weight": -6.4409
+    },
+    {
+      "word": "poor",
+      "weight": -6.2578
+    },
+    {
+      "word": "star",
+      "weight": -6.2238
+    },
+    {
+      "word": "horrible",
+      "weight": -5.876
+    },
+    {
+      "word": "terrible",
+      "weight": -5.6818
+    },
+    {
+      "word": "not recommend",
+      "weight": -5.652
+    },
+    {
+      "word": "return",
+      "weight": -5.6215
+    },
+    {
+      "word": "disappointing",
+      "weight": -5.4554
+    }
+  ]
+}

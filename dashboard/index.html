@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Review Sentiment MLOps Platform</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #080c14;
+      --bg-card: #0f172a;
+      --bg-card-hover: #152238;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(99, 102, 241, 0.3);
+      --primary: #6366f1;
+      --primary-glow: rgba(99, 102, 241, 0.25);
+      --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      --positive: #10b981;
+      --positive-bg: rgba(16, 185, 129, 0.12);
+      --positive-glow: rgba(16, 185, 129, 0.3);
+      --negative: #f43f5e;
+      --negative-bg: rgba(244, 63, 94, 0.12);
+      --negative-glow: rgba(244, 63, 94, 0.3);
+      --amber: #f59e0b;
+      --amber-bg: rgba(245, 158, 11, 0.12);
+      --cyan: #06b6d4;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.06) 0%, transparent 40%);
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 24px 20px 60px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--primary-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 20px;
+      color: #fff;
+      box-shadow: 0 4px 16px var(--primary-glow);
+    }
+
+    .brand-text h1 {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-text p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .status-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      border-radius: 9999px;
+      color: var(--text-muted);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--positive);
+      box-shadow: 0 0 8px var(--positive);
+      animation: pulseDot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.7);
+      padding: 6px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 28px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      padding: 10px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .tab-btn.active {
+      color: #fff;
+      background: var(--primary-gradient);
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.25s ease forwards;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 860px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .stat-box {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .stat-box:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-hover);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-family: var(--font-heading);
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .stat-subtext {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .stat-highlight-pos {
+      color: var(--positive);
+    }
+
+    .stat-highlight-neg {
+      color: var(--negative);
+    }
+
+    .stat-highlight-pri {
+      color: #a5b4fc;
+    }
+
+    .textarea-wrapper {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    textarea.review-input {
+      width: 100%;
+      height: 125px;
+      background: #090e1c;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 14px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    textarea.review-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .quick-examples {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .btn-example {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-muted);
+      font-size: 12px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-example:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-primary {
+      background: var(--primary-gradient);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 600;
+      padding: 12px 28px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: 0 4px 16px var(--primary-glow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .result-panel {
+      background: #090e1c;
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sentiment-badge {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 700;
+      padding: 8px 20px;
+      border-radius: 9999px;
+      letter-spacing: 0.02em;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-transform: uppercase;
+    }
+
+    .badge-positive {
+      background: var(--positive-bg);
+      color: var(--positive);
+      border: 1px solid var(--positive-glow);
+      box-shadow: 0 0 16px var(--positive-glow);
+    }
+
+    .badge-negative {
+      background: var(--negative-bg);
+      color: var(--negative);
+      border: 1px solid var(--negative-glow);
+      box-shadow: 0 0 16px var(--negative-glow);
+    }
+
+    .badge-neutral {
+      background: rgba(148, 163, 184, 0.1);
+      color: #94a3b8;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .latency-tag {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--cyan);
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .prob-bar-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .prob-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .prob-bar {
+      height: 12px;
+      background: #1e293b;
+      border-radius: 6px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .prob-fill-pos {
+      height: 100%;
+      background: var(--positive);
+      transition: width 0.4s ease;
+    }
+
+    .prob-fill-neg {
+      height: 100%;
+      background: var(--negative);
+      transition: width 0.4s ease;
+    }
+
+    .cleaned-text-preview {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      word-break: break-all;
+    }
+
+    .keywords-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .keyword-pill {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .keyword-pos {
+      background: var(--positive-bg);
+      color: #6ee7b7;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .keyword-neg {
+      background: var(--negative-bg);
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.25);
+    }
+
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    th {
+      background: #090e1c;
+      padding: 12px 16px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .cell-mono {
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    .step-card {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
+      display: flex;
+      gap: 16px;
+    }
+
+    .step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--primary-gradient);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .step-content h3 {
+      font-family: var(--font-heading);
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .step-content p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .code-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: #090e1c;
+      color: #a5b4fc;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-top: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .img-cm-wrap {
+      text-align: center;
+      padding: 10px;
+      background: #090e1c;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .img-cm-wrap img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  
+  <header>
+    <div class="brand">
+      <div class="logo-badge">ML</div>
+      <div class="brand-text">
+        <h1>Product Review Sentiment MLOps</h1>
+        <p>Production Pipeline &bull; SQLite Feature Store &bull; Precision-Calibrated NLP</p>
+      </div>
+    </div>
+
+    <div class="status-group">
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        <span id="api-status">API: Online</span>
+      </div>
+      <div class="status-pill">
+        <span id="db-status">Database: SQLite Connected</span>
+      </div>
+      <div class="status-pill">
+        <span id="model-status">Model: LogisticRegression v1.0</span>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('tab-tester', this)">
+      <span>⚡</span> Live Sentiment Tester
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-metrics', this)">
+      <span>📊</span> MLOps Metrics & Performance
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-database', this)">
+      <span>🗄️</span> Database Explorer
+    </button>
+    <button class="tab-btn" onclick="switchTab('tab-monitoring', this)">
+      <span>📡</span> Production Drift & Logs
+    </button>
+  </nav>
+
+  <div id="tab-tester" class="tab-pane active">
+    <div class="grid-2">
+      
+      <div class="card">
+        <h2 class="card-title">Live Review Sentiment Inference</h2>
+        <p class="card-desc">Type or select a customer review to run real-time sentiment analysis with probability calibration.</p>
+
+        <div class="quick-examples">
+          <span style="font-size: 12px; color: var(--text-dim); align-self: center;">Try sample:</span>
+          <button class="btn-example" onclick="setSample('positive')">⭐️ 5-Star Rave</button>
+          <button class="btn-example" onclick="setSample('negative')">😡 1-Star Defect</button>
+          <button class="btn-example" onclick="setSample('tricky')">⚠️ Tricky Negation</button>
+        </div>
+
+        <div class="textarea-wrapper">
+          <textarea id="review-input" class="review-input" placeholder="Paste or type product review here... (e.g., 'This serum is fantastic, leaves my skin hydrated all day!')">I absolutely love this product! The quality exceeded my expectations and it smells wonderful.</textarea>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <button id="btn-predict" class="btn-primary" onclick="runPrediction()">
+            <span>Analyze Sentiment</span>
+          </button>
+          <button class="btn-secondary" onclick="document.getElementById('review-input').value = ''">
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Model Prediction Result</h2>
+        <p class="card-desc">Computed class probabilities, confidence score, and inference latency.</p>
+
+        <div id="result-panel" class="result-panel">
+          <div class="result-header">
+            <div id="sentiment-badge" class="sentiment-badge badge-positive">
+              POSITIVE
+            </div>
+            <div id="latency-tag" class="latency-tag">
+              ⚡ 0.65 ms
+            </div>
+          </div>
+
+          <div class="prob-bar-container">
+            <div class="prob-labels">
+              <span style="color: var(--positive);">Positive: <b id="prob-pos-val">97.6%</b></span>
+              <span style="color: var(--negative);">Negative: <b id="prob-neg-val">2.4%</b></span>
+            </div>
+            <div class="prob-bar">
+              <div id="prob-fill-pos" class="prob-fill-pos" style="width: 97.6%;"></div>
+              <div id="prob-fill-neg" class="prob-fill-neg" style="width: 2.4%;"></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">Preprocessed Text (Tokens):</div>
+            <div id="cleaned-text-display" class="cleaned-text-preview">
+              absolutely love product quality exceeded expectations smells wonderful
+            </div>
+          </div>
+
+          <div style="font-size: 12px; color: var(--text-dim); display: flex; align-items: center; gap: 6px;">
+            <span>💾 Logged to SQLite table:</span>
+            <span class="code-badge">prediction_logs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-metrics" class="tab-pane">
+    <div class="grid-4">
+      <div class="stat-box">
+        <span class="stat-label">Model Accuracy</span>
+        <span class="stat-value stat-highlight-pri" id="metric-acc">93.37%</span>
+        <span class="stat-subtext">On Database Test Split (6,347 items)</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Positive Precision</span>
+        <span class="stat-value stat-highlight-pos" id="metric-prec-pos">97.22%</span>
+        <span class="stat-subtext">Minimized False Positives</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Negative Precision</span>
+        <span class="stat-value stat-highlight-neg" id="metric-prec-neg">77.90%</span>
+        <span class="stat-subtext">Balanced for minority class</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">ROC-AUC Score</span>
+        <span class="stat-value" style="color: var(--cyan);" id="metric-roc">0.9739</span>
+        <span class="stat-subtext">Excellent class separability</span>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      
+      <div class="card">
+        <h2 class="card-title">Confusion Matrix (Test Evaluation)</h2>
+        <p class="card-desc">Visual breakdown of true positive, true negative, and error counts.</p>
+        <div class="img-cm-wrap">
+          <img id="cm-image" src="/static/models/confusion_matrix.png" alt="Confusion Matrix" onerror="this.style.display='none'">
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Feature Explainability (Top Signals)</h2>
+        <p class="card-desc">Features with highest coefficients driving positive and negative sentiment classification.</p>
+        
+        <div style="margin-bottom: 14px;">
+          <div style="font-size: 13px; font-weight: 600; color: var(--positive); margin-bottom: 6px;">Top Positive Predictive Words:</div>
+          <div id="pos-keywords-wrap" class="keywords-wrap">
+            <span class="keyword-pill keyword-pos">+ great</span>
+            <span class="keyword-pill keyword-pos">+ love</span>
+            <span class="keyword-pill keyword-pos">+ perfect</span>
+            <span class="keyword-pill keyword-pos">+ good</span>
+            <span class="keyword-pill keyword-pos">+ works</span>
+            <span class="keyword-pill keyword-pos">+ amazing</span>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 13px; font-weight: 600; color: var(--negative); margin-bottom: 6px;">Top Negative Predictive Words:</div>
+          <div id="neg-keywords-wrap" class="keywords-wrap">
+            <span class="keyword-pill keyword-neg">- not</span>
+            <span class="keyword-pill keyword-neg">- disappointed</span>
+            <span class="keyword-pill keyword-neg">- not good</span>
+            <span class="keyword-pill keyword-neg">- broke</span>
+            <span class="keyword-pill keyword-neg">- not worth</span>
+            <span class="keyword-pill keyword-neg">- terrible</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <div>
+          <h2 class="card-title">MLOps Experiment Tracking (SQLite Table: experiments)</h2>
+          <p class="card-desc" style="margin-bottom: 0;">Automated model runs logged with hyperparameters and performance.</p>
+        </div>
+        <button class="btn-secondary" onclick="loadMetrics()">Refresh</button>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Exp ID</th>
+              <th>Model Name</th>
+              <th>Algorithm</th>
+              <th>Train / Test Samples</th>
+              <th>Accuracy</th>
+              <th>Macro Precision</th>
+              <th>ROC-AUC</th>
+              <th>Created At</th>
+            </tr>
+          </thead>
+          <tbody id="experiments-table-body">
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-database" class="tab-pane">
+    <div class="grid-4">
+      <div class="stat-box">
+        <span class="stat-label">Raw Reviews Ingested</span>
+        <span class="stat-value" id="db-raw-count">35,000</span>
+        <span class="stat-subtext">Table: raw_reviews</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Processed Reviews</span>
+        <span class="stat-value" id="db-proc-count">31,732</span>
+        <span class="stat-subtext">Table: processed_reviews</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Train / Test Split</span>
+        <span class="stat-value" id="db-split-ratio">25,385 / 6,347</span>
+        <span class="stat-subtext">Stratified 80% / 20%</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Prediction Logs</span>
+        <span class="stat-value" id="db-pred-count">0</span>
+        <span class="stat-subtext">Table: prediction_logs</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <div>
+          <h2 class="card-title">Database Architecture & Schema</h2>
+          <p class="card-desc" style="margin-bottom: 0;">SQLite zero-setup database functioning as both Feature Store and Experiment Registry.</p>
+        </div>
+        <button class="btn-secondary" onclick="loadDatabaseStats()">Refresh Stats</button>
+      </div>
+
+      <div class="grid-2" style="margin-top: 16px;">
+        <div style="background: #090e1c; padding: 16px; border-radius: 12px; border: 1px solid var(--border-color);">
+          <div style="font-weight: 600; color: #a5b4fc; margin-bottom: 8px;">1. raw_reviews</div>
+          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+            Stores original ingested reviews from Amazon dataset: <code>review_id</code>, <code>product_id</code>, <code>review_title</code>, <code>review_text</code>, <code>rating</code> (1-5), <code>timestamp</code>, <code>helpful_vote</code>, <code>verified_purchase</code>.
+          </p>
+        </div>
+
+        <div style="background: #090e1c; padding: 16px; border-radius: 12px; border: 1px solid var(--border-color);">
+          <div style="font-weight: 600; color: #a5b4fc; margin-bottom: 8px;">2. processed_reviews</div>
+          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+            Cleaned and normalized text ready for NLP vectorization: <code>cleaned_text</code> (contractions expanded, HTML removed), <code>sentiment</code> (1=Positive, 0=Negative), <code>split</code> ('train' / 'test').
+          </p>
+        </div>
+
+        <div style="background: #090e1c; padding: 16px; border-radius: 12px; border: 1px solid var(--border-color);">
+          <div style="font-weight: 600; color: #a5b4fc; margin-bottom: 8px;">3. experiments</div>
+          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+            MLOps experiment tracking: records algorithm, hyperparameters JSON, accuracy, precision, recall, F1-score, ROC-AUC, and saved model artifact paths.
+          </p>
+        </div>
+
+        <div style="background: #090e1c; padding: 16px; border-radius: 12px; border: 1px solid var(--border-color);">
+          <div style="font-weight: 600; color: #a5b4fc; margin-bottom: 8px;">4. prediction_logs</div>
+          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+            Captures every real-time prediction sent through the API with text snippet, predicted label, confidence, probability breakdown, and latency in milliseconds.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-monitoring" class="tab-pane">
+    <div class="grid-4">
+      <div class="stat-box">
+        <span class="stat-label">Monitoring Health</span>
+        <span class="stat-value" id="drift-status" style="color: var(--positive);">NORMAL</span>
+        <span class="stat-subtext">No severe distribution drift</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Avg Live Confidence</span>
+        <span class="stat-value" id="drift-conf">97.8%</span>
+        <span class="stat-subtext">Model certainty threshold > 70%</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Avg Live Latency</span>
+        <span class="stat-value" id="drift-latency">0.68 ms</span>
+        <span class="stat-subtext">Sub-millisecond inference</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-label">Total Predictions Logged</span>
+        <span class="stat-value" id="drift-total">2</span>
+        <span class="stat-subtext">In SQLite prediction_logs</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <div>
+          <h2 class="card-title">Live Inference Stream (prediction_logs)</h2>
+          <p class="card-desc" style="margin-bottom: 0;">Real-time stream of incoming customer reviews scored by the model.</p>
+        </div>
+        <button class="btn-secondary" onclick="loadMonitoringData()">Refresh Stream</button>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Review Snippet</th>
+              <th>Predicted Sentiment</th>
+              <th>Confidence</th>
+              <th>Prob Pos</th>
+              <th>Prob Neg</th>
+              <th>Latency</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody id="logs-table-body">
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    btn.classList.add('active');
+
+    if (tabId === 'tab-metrics') loadMetrics();
+    if (tabId === 'tab-database') loadDatabaseStats();
+    if (tabId === 'tab-monitoring') loadMonitoringData();
+  }
+
+  function setSample(type) {
+    const input = document.getElementById('review-input');
+    if (type === 'positive') {
+      input.value = "This moisturizer is absolutely incredible! My skin feels hydrated, soft, and glowing. Exceeded all my expectations!";
+    } else if (type === 'negative') {
+      input.value = "Horrible purchase. It arrived leaking, smelled awful, and gave me an allergic reaction. Do not waste your money!";
+    } else if (type === 'tricky') {
+      input.value = "I was worried this wouldn't work well, but it is not bad at all. Actually turns out to be quite decent and effective.";
+    }
+    runPrediction();
+  }
+
+  async function runPrediction() {
+    const text = document.getElementById('review-input').value.trim();
+    if (!text) return;
+
+    const btn = document.getElementById('btn-predict');
+    btn.disabled = true;
+    btn.innerHTML = '<span>Analyzing...</span>';
+
+    try {
+      const res = await fetch('/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: text, log_to_db: true })
+      });
+
+      const data = await res.json();
+      renderPrediction(data);
+    } catch (err) {
+      console.error('Prediction request error:', err);
+      alert('Error connecting to prediction API: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span>Analyze Sentiment</span>';
+    }
+  }
+
+  function renderPrediction(data) {
+    const badge = document.getElementById('sentiment-badge');
+    badge.className = 'sentiment-badge ' + (data.sentiment === 'Positive' ? 'badge-positive' : 'badge-negative');
+    badge.innerText = data.sentiment;
+
+    document.getElementById('latency-tag').innerText = `⚡ ${data.latency_ms} ms`;
+    
+    const posPercent = (data.prob_positive * 100).toFixed(1);
+    const negPercent = (data.prob_negative * 100).toFixed(1);
+
+    document.getElementById('prob-pos-val').innerText = `${posPercent}%`;
+    document.getElementById('prob-neg-val').innerText = `${negPercent}%`;
+
+    document.getElementById('prob-fill-pos').style.width = `${posPercent}%`;
+    document.getElementById('prob-fill-neg').style.width = `${negPercent}%`;
+
+    document.getElementById('cleaned-text-display').innerText = data.cleaned_text || '(empty tokens)';
+  }
+
+  async function loadMetrics() {
+    try {
+      const res = await fetch('/metrics');
+      const data = await res.json();
+      
+      const m = data.latest_metrics || {};
+      if (m.accuracy) document.getElementById('metric-acc').innerText = `${(m.accuracy * 100).toFixed(2)}%`;
+      if (m.precision_positive) document.getElementById('metric-prec-pos').innerText = `${(m.precision_positive * 100).toFixed(2)}%`;
+      if (m.precision_negative) document.getElementById('metric-prec-neg').innerText = `${(m.precision_negative * 100).toFixed(2)}%`;
+      if (m.roc_auc) document.getElementById('metric-roc').innerText = m.roc_auc.toFixed(4);
+
+      const kw = data.top_keywords || {};
+      if (kw.positive_words && kw.positive_words.length > 0) {
+        const posHtml = kw.positive_words.map(w => `<span class="keyword-pill keyword-pos">+ ${w.word} (${w.weight})</span>`).join('');
+        document.getElementById('pos-keywords-wrap').innerHTML = posHtml;
+      }
+      if (kw.negative_words && kw.negative_words.length > 0) {
+        const negHtml = kw.negative_words.map(w => `<span class="keyword-pill keyword-neg">- ${w.word} (${w.weight})</span>`).join('');
+        document.getElementById('neg-keywords-wrap').innerHTML = negHtml;
+      }
+
+      const exps = data.recent_experiments || [];
+      const tb = document.getElementById('experiments-table-body');
+      tb.innerHTML = exps.map(e => `
+        <tr>
+          <td class="cell-mono">#${e.experiment_id}</td>
+          <td><b>${e.model_name}</b></td>
+          <td><span class="code-badge">${e.algorithm}</span></td>
+          <td class="cell-mono">${e.train_size?.toLocaleString()} / ${e.test_size?.toLocaleString()}</td>
+          <td style="color: var(--positive); font-weight: 600;">${(e.accuracy * 100).toFixed(2)}%</td>
+          <td>${(e.precision_macro * 100).toFixed(2)}%</td>
+          <td>${e.roc_auc?.toFixed(4) || 'N/A'}</td>
+          <td class="cell-mono" style="color: var(--text-dim);">${e.created_at || ''}</td>
+        </tr>
+      `).join('');
+
+    } catch (err) {
+      console.error('Error fetching metrics:', err);
+    }
+  }
+
+  async function loadDatabaseStats() {
+    try {
+      const res = await fetch('/db/stats');
+      const data = await res.json();
+      
+      document.getElementById('db-raw-count').innerText = (data.raw_reviews_count || 0).toLocaleString();
+      document.getElementById('db-proc-count').innerText = (data.processed_reviews_count || 0).toLocaleString();
+      document.getElementById('db-split-ratio').innerText = `${(data.train_count || 0).toLocaleString()} / ${(data.test_count || 0).toLocaleString()}`;
+      document.getElementById('db-pred-count').innerText = (data.prediction_logs_count || 0).toLocaleString();
+    } catch (err) {
+      console.error('Error fetching db stats:', err);
+    }
+  }
+
+  async function loadMonitoringData() {
+    try {
+      const [driftRes, logsRes] = await Promise.all([
+        fetch('/monitoring/drift'),
+        fetch('/predictions/recent?limit=25')
+      ]);
+
+      const drift = await driftRes.json();
+      const logs = await logsRes.json();
+
+      document.getElementById('drift-status').innerText = drift.status;
+      document.getElementById('drift-status').style.color = drift.drift_alert ? 'var(--negative)' : 'var(--positive)';
+      document.getElementById('drift-conf').innerText = `${(drift.avg_confidence * 100).toFixed(1)}%`;
+      document.getElementById('drift-latency').innerText = `${drift.avg_latency_ms} ms`;
+      document.getElementById('drift-total').innerText = drift.total_predictions_analyzed;
+
+      const tb = document.getElementById('logs-table-body');
+      if (logs.logs && logs.logs.length > 0) {
+        tb.innerHTML = logs.logs.map(l => {
+          const isPos = l.predicted_sentiment === 'Positive';
+          return `
+            <tr>
+              <td class="cell-mono">#${l.id}</td>
+              <td style="max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                ${escapeHtml(l.review_text)}
+              </td>
+              <td>
+                <span class="keyword-pill ${isPos ? 'keyword-pos' : 'keyword-neg'}">
+                  ${l.predicted_sentiment}
+                </span>
+              </td>
+              <td class="cell-mono">${(l.confidence * 100).toFixed(1)}%</td>
+              <td class="cell-mono" style="color: var(--positive);">${(l.prob_positive * 100).toFixed(1)}%</td>
+              <td class="cell-mono" style="color: var(--negative);">${(l.prob_negative * 100).toFixed(1)}%</td>
+              <td class="cell-mono">${l.latency_ms} ms</td>
+              <td class="cell-mono" style="color: var(--text-dim);">${l.timestamp}</td>
+            </tr>
+          `;
+        }).join('');
+      } else {
+        tb.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-dim); padding: 20px;">No predictions logged yet. Try testing a review!</td></tr>';
+      }
+
+    } catch (err) {
+      console.error('Error loading monitoring data:', err);
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    loadDatabaseStats();
+  });
+</script>
+
+</body>
+</html>

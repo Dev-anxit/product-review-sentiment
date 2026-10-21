@@ -1,0 +1,11 @@
+{
+  "model_name": "sentiment_logistic_regression",
+  "algorithm": "logistic_regression",
+  "accuracy": 0.9316,
+  "precision_macro": 0.8714,
+  "precision_positive": 0.9725,
+  "precision_negative": 0.7702,
+  "recall_macro": 0.9101,
+  "f1_macro": 0.8889,
+  "roc_auc": 0.974
+}

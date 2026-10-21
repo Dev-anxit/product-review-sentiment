@@ -1,0 +1,43 @@
+project:
+  name: "Product Review Sentiment MLOps"
+  version: "1.0.0"
+  description: "End-to-end MLOps pipeline with SQLite database, model training, tracking, and REST API."
+
+database:
+  db_path: "data/reviews_sentiment.db"
+  raw_table: "raw_reviews"
+  processed_table: "processed_reviews"
+  experiments_table: "experiments"
+  predictions_table: "prediction_logs"
+
+data:
+  raw_csv_path: "data/raw/reviews.csv"
+  ingest_limit: 35000
+  test_size: 0.20
+  random_state: 42
+  sentiment_mode: "binary"
+
+features:
+  ngram_range: [1, 2]
+  max_features: 20000
+  min_df: 3
+  sublinear_tf: true
+  use_idf: true
+
+model:
+  algorithm: "logistic_regression"
+  C: 2.0
+  penalty: "l2"
+  class_weight: "balanced"
+  max_iter: 1000
+  random_state: 42
+  save_dir: "models"
+  model_filename: "sentiment_model.joblib"
+  vectorizer_filename: "vectorizer.joblib"
+  metrics_filename: "metrics.json"
+
+api:
+  host: "127.0.0.1"
+  port: 8000
+  title: "Product Review Sentiment API"
+  version: "1.0.0"
